@@ -11,6 +11,15 @@ COPY --from=builder /app/target/*.jar app.jar
 COPY opentelemetry-javaagent.jar ./opentelemetry-javaagent.jar
 COPY opentelemetry-javaagent-all.jar ./opentelemetry-javaagent-all.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dserver.port=8080", "-javaagent:opentelemetry-javaagent.jar", "-jar", "app.jar"]
+
+JAVA_OPTS="-Dapplication.name=spring-demo
+-Dapplication.home=mobireach
+-Dotel.traces.exporter=jaeger
+-Dotel.exporter.jaeger.endpoint=http://tempo.tracing.svc:14250 \ (or -Dotel.jaeger.endpoint=jaeger-all-in-one:14250 )
+-Dotel.jaeger.service.name=spring-boot-rest-service
+-javaagent:opentelemetry-javaagent.jar"
+
+ENTRYPOINT ["java", "-Dserver.port=8080",  ${JAVA_OPTS}, "-jar", "app.jar"]
+#ENTRYPOINT ["java", "-Dserver.port=8080", "-javaagent:opentelemetry-javaagent.jar", "-jar", "app.jar"]
 #ENTRYPOINT ["java", "-Dserver.port=8080", "-javaagent:opentelemetry-javaagent-all.jar" "-Dotel.trace.exporter=jaeger" "-Dotel.exporter.jaeger.endpoint=tempo.tracing.svc:14250"  "-Dotel.resource.attributes=service.name=spring-boot-instrumentation" "-Dotel.javaagent.debug=true" "-Dotel.metrics.exporter=none", "-jar", "app.jar"]
 
