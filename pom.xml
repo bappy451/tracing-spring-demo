@@ -66,6 +66,13 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <argLine>
+                            -Dotel.trace.exporter=jaeger 
+                            -Dotel.exporter.jaeger.endpoint=tempo.tracing.svc:14250  
+                            -Dotel.resource.attributes=service.name=${project.artifactId} 
+                            -Dotel.javaagent.debug=false 
+                            -Dotel.metrics.exporter=none
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
